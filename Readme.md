@@ -4,7 +4,7 @@ noglog is a replacement for [github.com/golang/glog][glog] implementation.
 
 This package is a "bring you own" logger for glog replacement. It will replace all the glog calls with any logger that implements `noglog.Logger` interface.
 
-You can achieve thinks like this:
+You can achieve things like this:
 
 Original glog log line
 
