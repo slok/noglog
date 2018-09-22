@@ -1,6 +1,6 @@
 # noglog [![Build Status][travis-image]][travis-url] [![Go Report Card][goreport-image]][goreport-url] [![GoDoc][godoc-image]][godoc-url]
 
-noglog is a replacement for go [glog] implementation.
+noglog is a replacement for [github.com/golang/glog][glog] implementation.
 
 This package is a "bring you own" logger for glog replacement. It will replace all the glog calls with any logger that implements `noglog.Logger` interface.
 
@@ -103,7 +103,7 @@ Although noglog can use any logger due to the simple interface, there are other 
 [goreport-url]: https://goreportcard.com/report/github.com/slok/noglog
 [godoc-image]: https://godoc.org/github.com/slok/noglog?status.svg
 [godoc-url]: https://godoc.org/github.com/slok/noglog
-[glog]: github.com/golang/glog
+[glog]: https://github.com/golang/glog
 [client-go]: https://github.com/kubernetes/client-go
 [flags]: https://golang.org/pkg/flag
 [glog-logrus]: https://github.com/kubermatic/glog-logrus
