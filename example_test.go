@@ -9,7 +9,7 @@ import (
 // LoggerFunc shows how you would set a custom logger. In this case the LoggerFunc helper has been used,
 // so we don't need to create a new type for the example.  But you could create a new type that satisfies
 // noglog.Logger interface.
-func ExampleGlog_LoggerFunc() {
+func Example_loggerFunc() {
 	debug := false
 
 	// Create our logger using the helper funcs so we don't need to create a new type.
