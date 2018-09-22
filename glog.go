@@ -1,3 +1,7 @@
+// Package glog implements almost [glog](https://github.com/golang/glog) package API.
+// The aim of this pacakge is to replace all the glog calls for the ones to a custom
+// logger that satisfies this package Logger interface. This way any code using glog
+// global logger will use the desired logger.
 package glog
 
 import (
@@ -185,13 +189,42 @@ func Exitf(format string, args ...interface{}) {
 	os.Exit(1)
 }
 
+// LoggerFunc is a logger that satisfies Logger interface and
+// gets the Logger interface required methods as func fields.
+// Basically is a helper to not create a custom type.
+type LoggerFunc struct {
+	// DebugEnabledFunc is a function for DebugEnabledFunc `Logger.DebugEnabled() bool`.
+	DebugEnabledFunc func() bool
+	// DebugfFunc is a function for DebugEnabledFunc `Logger.Debugf(format string, args ...interface{})`.
+	DebugfFunc func(format string, args ...interface{})
+	// InfofFunc is a function for DebugEnabledFunc `Logger.Infof(format string, args ...interface{})`.
+	InfofFunc func(format string, args ...interface{})
+	// WarnfFunc is a function for DebugEnabledFunc `Logger.Warnf(format string, args ...interface{})`.
+	WarnfFunc func(format string, args ...interface{})
+	// ErrorfFunc is a function for DebugEnabledFunc `Logger.Errorf(format string, args ...interface{})`.
+	ErrorfFunc func(format string, args ...interface{})
+}
+
+// DebugEnabled satisfies Logger interface.
+func (l *LoggerFunc) DebugEnabled() bool { return l.DebugEnabledFunc() }
+
+// Debugf satisfies Logger interface.
+func (l *LoggerFunc) Debugf(format string, args ...interface{}) { l.DebugfFunc(format, args...) }
+
+// Infof satisfies Logger interface.
+func (l *LoggerFunc) Infof(format string, args ...interface{}) { l.InfofFunc(format, args...) }
+
+// Warnf satisfies Logger interface.
+func (l *LoggerFunc) Warnf(format string, args ...interface{}) { l.WarnfFunc(format, args...) }
+
+// Errorf satisfies Logger interface.
+func (l *LoggerFunc) Errorf(format string, args ...interface{}) { l.ErrorfFunc(format, args...) }
+
 // Dummy is a dummy logger useful for tests and disabling logging.
-var Dummy = &dummy{}
-
-type dummy struct{}
-
-func (*dummy) DebugEnabled() bool                        { return true }
-func (*dummy) Debugf(format string, args ...interface{}) {}
-func (*dummy) Infof(format string, args ...interface{})  {}
-func (*dummy) Warnf(format string, args ...interface{})  {}
-func (*dummy) Errorf(format string, args ...interface{}) {}
+var Dummy = &LoggerFunc{
+	DebugEnabledFunc: func() bool { return true },
+	DebugfFunc:       func(format string, args ...interface{}) {},
+	InfofFunc:        func(format string, args ...interface{}) {},
+	WarnfFunc:        func(format string, args ...interface{}) {},
+	ErrorfFunc:       func(format string, args ...interface{}) {},
+}

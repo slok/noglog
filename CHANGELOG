@@ -1,4 +1,5 @@
 ## 0.x.x / 2018-xx-xx
 
+* [FEATURE] Add LoggerFunc, helper to create a Loggers without a new type.
 * [FEATURE] Add dummy implementation.
 * [FEATURE] Add noglog Logger interface and internal implementation.

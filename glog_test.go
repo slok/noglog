@@ -36,8 +36,8 @@ func (m *mockLogger) Errorf(format string, args ...interface{}) {
 	m.rw.WriteString("errorf: " + s)
 }
 
-// TestGlog will test the glog replaced logger. This tests uses globals don't run in parallel.
-func TestGlog(t *testing.T) {
+// TestLogger will test the glog replaced logger. This tests uses globals don't run in parallel.
+func TestLogger(t *testing.T) {
 	tests := []struct {
 		name        string
 		enableDebug bool
@@ -132,21 +132,21 @@ func TestGlog(t *testing.T) {
 		},
 
 		{
-			name: "Verbose Info (not enabled).",
+			name: "Verbose Info (disabled).",
 			glogActions: func() {
 				glog.V(2).Info("I'm Batman!")
 			},
 			expLog: "",
 		},
 		{
-			name: "Verbose Infoln (not enabled).",
+			name: "Verbose Infoln (disabled).",
 			glogActions: func() {
 				glog.V(2).Infoln("I'm Batman!")
 			},
 			expLog: "",
 		},
 		{
-			name: "Verbose Infof (enabled).",
+			name: "Verbose Infof (disabled).",
 			glogActions: func() {
 				glog.V(2).Infof("%s %s", "I'm", "Batman!")
 			},
@@ -184,6 +184,75 @@ func TestGlog(t *testing.T) {
 				debug: test.enableDebug,
 			}
 			glog.SetLogger(ml)
+			test.glogActions()
+
+			gotLog := ml.rw.String()
+			if test.expLog != gotLog {
+				t.Errorf("expected log doesn't match: \n exp: %s\n got: %s", test.expLog, gotLog)
+			}
+		})
+	}
+}
+
+func TestLoggerFunc(t *testing.T) {
+	tests := []struct {
+		name        string
+		enableDebug bool
+		glogActions func()
+		expLog      string
+	}{
+		{
+			name: "Info.",
+			glogActions: func() {
+				glog.Info("I'm Batman!")
+			},
+			expLog: "infof: I'm Batman!",
+		},
+		{
+			name: "Warning.",
+			glogActions: func() {
+				glog.Warning("I'm Batman!")
+			},
+			expLog: "warnf: I'm Batman!",
+		},
+		{
+			name: "Error.",
+			glogActions: func() {
+				glog.Error("I'm Batman!")
+			},
+			expLog: "errorf: I'm Batman!",
+		},
+		{
+			name: "Verbose Info (disabled).",
+			glogActions: func() {
+				glog.V(2).Info("I'm Batman!")
+			},
+			expLog: "",
+		},
+		{
+			name:        "Verbose Info (enabled).",
+			enableDebug: true,
+			glogActions: func() {
+				glog.V(2).Info("I'm Batman!")
+			},
+			expLog: "debugf: I'm Batman!",
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			ml := &mockLogger{debug: test.enableDebug}
+
+			// Create our logger using funcs.
+			mlf := &glog.LoggerFunc{
+				DebugEnabledFunc: ml.DebugEnabled,
+				DebugfFunc:       ml.Debugf,
+				InfofFunc:        ml.Infof,
+				WarnfFunc:        ml.Warnf,
+				ErrorfFunc:       ml.Errorf,
+			}
+
+			glog.SetLogger(mlf)
 			test.glogActions()
 
 			gotLog := ml.rw.String()
