@@ -13,7 +13,7 @@ func Example_loggerFunc() {
 	debug := false
 
 	// Create our logger using the helper funcs so we don't need to create a new type.
-	mlf := &glog.LoggerFunc{
+	logger := &glog.LoggerFunc{
 		DebugEnabledFunc: func() bool { return debug },
 		DebugfFunc:       func(format string, args ...interface{}) { fmt.Printf("[DEBUG] "+format, args...) },
 		InfofFunc:        func(format string, args ...interface{}) { fmt.Printf("[INFO] "+format, args...) },
@@ -22,7 +22,7 @@ func Example_loggerFunc() {
 	}
 
 	// Set the custom logger
-	glog.SetLogger(mlf)
+	glog.SetLogger(logger)
 
 	// Test it.
 	glog.Info("I'm batman!")
