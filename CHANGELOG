@@ -1,4 +1,4 @@
-## 0.x.x / 2018-xx-xx
+## 0.2.0 / 2018-09-23
 
 * [FEATURE] Simplify API by removing `DebugEnabled` method.
 
