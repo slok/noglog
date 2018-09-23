@@ -4,21 +4,19 @@ noglog is a replacement for [github.com/golang/glog][glog] implementation.
 
 This package is a "bring you own" logger for glog replacement. It will replace all the glog calls with any logger that implements `noglog.Logger` interface.
 
-You can achieve things like this:
-
-Original glog log line
+You can go from this:
 
 ```text
 ERROR: logging before flag.Parse: I0921 14:49:49.283733       1 leaderelection.go:175] attempting to acquire leader lease example-lock...
 ```
 
-to a custom log line form our desired logger
+to this:
 
 ```text
 INFO[0000] attempting to acquire leader lease  example-lock...  source=k8s src="leaderelection.go:175"
 ```
 
-or whatever format you want (or don't show at all, by disabling it).
+or whatever format you want (or don't show at all).
 
 ## Features
 

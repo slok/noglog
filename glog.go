@@ -1,5 +1,5 @@
 // Package glog implements almost [glog](https://github.com/golang/glog) package API.
-// The aim of this pacakge is to replace all the glog calls for the ones to a custom
+// The aim of this package is to replace all the glog calls for the ones to a custom
 // logger that satisfies this package Logger interface. This way any code using glog
 // global logger will use the desired logger.
 package glog
