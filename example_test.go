@@ -14,11 +14,14 @@ func Example_loggerFunc() {
 
 	// Create our logger using the helper funcs so we don't need to create a new type.
 	logger := &glog.LoggerFunc{
-		DebugEnabledFunc: func() bool { return debug },
-		DebugfFunc:       func(format string, args ...interface{}) { fmt.Printf("[DEBUG] "+format, args...) },
-		InfofFunc:        func(format string, args ...interface{}) { fmt.Printf("[INFO] "+format, args...) },
-		WarnfFunc:        func(format string, args ...interface{}) { fmt.Printf("[WARN] "+format, args...) },
-		ErrorfFunc:       func(format string, args ...interface{}) { fmt.Printf("[ERROR] "+format, args...) },
+		DebugfFunc: func(format string, args ...interface{}) {
+			if debug {
+				fmt.Printf("[DEBUG] "+format, args...)
+			}
+		},
+		InfofFunc:  func(format string, args ...interface{}) { fmt.Printf("[INFO] "+format, args...) },
+		WarnfFunc:  func(format string, args ...interface{}) { fmt.Printf("[WARN] "+format, args...) },
+		ErrorfFunc: func(format string, args ...interface{}) { fmt.Printf("[ERROR] "+format, args...) },
 	}
 
 	// Set the custom logger

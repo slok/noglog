@@ -14,8 +14,6 @@ import (
 // needs to implement with the aim of replacing the logger that
 // comes with glog.
 type Logger interface {
-	// DebugEnabled returns if the Debug level of the logger is enabled.
-	DebugEnabled() bool
 	// Debugf logs with debug.
 	Debugf(format string, args ...interface{})
 	// Infof logs with info.
@@ -51,15 +49,13 @@ func Flush() {}
 
 // V replacement for glog.
 func V(_ Level) Verbose {
-	return Verbose(logger.DebugEnabled())
+	return Verbose(false) // Doesn't mind.
 }
 
 // Info replacement for glog.
-func (v Verbose) Info(args ...interface{}) {
-	if v {
-		s := fmt.Sprint(args...)
-		logger.Debugf(s)
-	}
+func (Verbose) Info(args ...interface{}) {
+	s := fmt.Sprint(args...)
+	logger.Debugf(s)
 }
 
 // Infoln replacement for glog.
@@ -69,10 +65,8 @@ func (v Verbose) Infoln(args ...interface{}) {
 }
 
 // Infof replacement for glog.
-func (v Verbose) Infof(format string, args ...interface{}) {
-	if v {
-		logger.Debugf(format, args...)
-	}
+func (Verbose) Infof(format string, args ...interface{}) {
+	logger.Debugf(format, args...)
 }
 
 // Info replacement for glog.
@@ -193,20 +187,15 @@ func Exitf(format string, args ...interface{}) {
 // gets the Logger interface required methods as func fields.
 // Basically is a helper to not create a custom type.
 type LoggerFunc struct {
-	// DebugEnabledFunc is a function for DebugEnabledFunc `Logger.DebugEnabled() bool`.
-	DebugEnabledFunc func() bool
-	// DebugfFunc is a function for DebugEnabledFunc `Logger.Debugf(format string, args ...interface{})`.
+	// DebugfFunc is a function for DebugfFunc `Logger.Debugf(format string, args ...interface{})`.
 	DebugfFunc func(format string, args ...interface{})
-	// InfofFunc is a function for DebugEnabledFunc `Logger.Infof(format string, args ...interface{})`.
+	// InfofFunc is a function for InfofFunc `Logger.Infof(format string, args ...interface{})`.
 	InfofFunc func(format string, args ...interface{})
-	// WarnfFunc is a function for DebugEnabledFunc `Logger.Warnf(format string, args ...interface{})`.
+	// WarnfFunc is a function for WarnfFunc `Logger.Warnf(format string, args ...interface{})`.
 	WarnfFunc func(format string, args ...interface{})
-	// ErrorfFunc is a function for DebugEnabledFunc `Logger.Errorf(format string, args ...interface{})`.
+	// ErrorfFunc is a function for ErrorfFunc `Logger.Errorf(format string, args ...interface{})`.
 	ErrorfFunc func(format string, args ...interface{})
 }
-
-// DebugEnabled satisfies Logger interface.
-func (l *LoggerFunc) DebugEnabled() bool { return l.DebugEnabledFunc() }
 
 // Debugf satisfies Logger interface.
 func (l *LoggerFunc) Debugf(format string, args ...interface{}) { l.DebugfFunc(format, args...) }
@@ -222,9 +211,8 @@ func (l *LoggerFunc) Errorf(format string, args ...interface{}) { l.ErrorfFunc(f
 
 // Dummy is a dummy logger useful for tests and disabling logging.
 var Dummy = &LoggerFunc{
-	DebugEnabledFunc: func() bool { return true },
-	DebugfFunc:       func(format string, args ...interface{}) {},
-	InfofFunc:        func(format string, args ...interface{}) {},
-	WarnfFunc:        func(format string, args ...interface{}) {},
-	ErrorfFunc:       func(format string, args ...interface{}) {},
+	DebugfFunc: func(format string, args ...interface{}) {},
+	InfofFunc:  func(format string, args ...interface{}) {},
+	WarnfFunc:  func(format string, args ...interface{}) {},
+	ErrorfFunc: func(format string, args ...interface{}) {},
 }

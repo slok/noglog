@@ -13,10 +13,6 @@ type mockLogger struct {
 	rw    bytes.Buffer
 }
 
-func (m *mockLogger) DebugEnabled() bool {
-	return m.debug
-}
-
 func (m *mockLogger) Debugf(format string, args ...interface{}) {
 	if m.debug {
 		s := fmt.Sprintf(format, args...)
@@ -245,11 +241,10 @@ func TestLoggerFunc(t *testing.T) {
 
 			// Create our logger using funcs.
 			mlf := &glog.LoggerFunc{
-				DebugEnabledFunc: ml.DebugEnabled,
-				DebugfFunc:       ml.Debugf,
-				InfofFunc:        ml.Infof,
-				WarnfFunc:        ml.Warnf,
-				ErrorfFunc:       ml.Errorf,
+				DebugfFunc: ml.Debugf,
+				InfofFunc:  ml.Infof,
+				WarnfFunc:  ml.Warnf,
+				ErrorfFunc: ml.Errorf,
 			}
 
 			glog.SetLogger(mlf)
