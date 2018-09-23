@@ -70,10 +70,87 @@ func main() {
 ```
 
 For security reasons if you don't set a logger, it will use a dummy logger that will disable Kubernetes logs. Sometimes this is useful also.
-
 Your custom logger needs to satisfy `noglog.Logger` interface.
+You have a helper if you want to create a logger using functions instead of creating a new type, `noglog.LoggerFunc`.
 
-You have a helper if you want to create a logger using functions instead of creating a new type, `noglog.LoggerFunc`
+This helper gives a lot of power to set up loggers easily. Some examples...
+
+Logrus:
+
+```golang
+import (
+    "github.com/google/glog"
+    "github.com/sirupsen/logrus"
+)
+
+func main() {
+    // Our app logger.
+    logger := logrus.New()
+    logger.SetLevel(logrus.DebugLevel)
+
+    // Set our glog replacement.
+    glog.SetLogger(&glog.LoggerFunc{
+        DebugfFunc: func(f string, a ...interface{}) { logger.Debugf(f, a...) },
+        InfofFunc:  func(f string, a ...interface{}) { logger.Infof(f, a...) },
+        WarnfFunc:  func(f string, a ...interface{}) { logger.Warnf(f, a...) },
+        ErrorfFunc: func(f string, a ...interface{}) { logger.Errorf(f, a...) },
+    })
+
+    glog.Info("I'm batman!")
+}
+```
+
+Example for zap:
+
+```golang
+import (
+    "github.com/google/glog"
+    "go.uber.org/zap"
+)
+
+func main() {
+    // Our app logger.
+    logger, _ := zap.NewProduction()
+    slogger := logger.Sugar()
+
+    // Set our glog replacement.
+    glog.SetLogger(&glog.LoggerFunc{
+        DebugfFunc: func(f string, a ...interface{}) { slogger.Debugf(f, a...) },
+        InfofFunc:  func(f string, a ...interface{}) { slogger.Infof(f, a...) },
+        WarnfFunc:  func(f string, a ...interface{}) { slogger.Warnf(f, a...) },
+        ErrorfFunc: func(f string, a ...interface{}) { slogger.Errorf(f, a...) },
+    })
+
+    glog.Info("I'm batman!")
+}
+```
+
+Example for zerolog:
+
+```golang
+import (
+    "os"
+
+    "github.com/google/glog"
+    "github.com/rs/zerolog"
+)
+
+func main() {
+    // Our app logger.
+    w := zerolog.ConsoleWriter{Out: os.Stderr}
+    logger := zerolog.New(w).With().Timestamp().Logger()
+
+    // Set our glog replacement.
+    glog.SetLogger(&glog.LoggerFunc{
+        DebugfFunc: func(f string, a ...interface{}) { logger.Debug().Msgf(f, a...) },
+        InfofFunc:  func(f string, a ...interface{}) { logger.Info().Msgf(f, a...) },
+        WarnfFunc:  func(f string, a ...interface{}) { logger.Warn().Msgf(f, a...) },
+        ErrorfFunc: func(f string, a ...interface{}) { logger.Error().Msgf(f, a...) },
+    })
+
+    glog.Info("I'm batman!")
+}
+```
 
 ## Why
 
