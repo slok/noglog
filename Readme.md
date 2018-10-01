@@ -161,7 +161,7 @@ For example in Kubernetes glog is around all the source code, they don't use a c
 ## When to use noglog
 
 - Tired of glog logs.
-- Every extension/app of Kubernetes I do has anoying unstructured logs.
+- Every extension/app of Kubernetes I do has annoying unstructured logs.
 - My app flags have glog flags that I didn't ask for.
 - `ERROR: logging before flag.Parse: W0922` WTF when using a custom `flag.FlagSet`.
 
