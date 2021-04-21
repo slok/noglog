@@ -1,1 +1,1 @@
-module github.com/slok/noglog
+module github.com/planetscale/noglog
