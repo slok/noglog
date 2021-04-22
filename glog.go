@@ -216,3 +216,5 @@ var Dummy = &LoggerFunc{
 	WarnfFunc:  func(format string, args ...interface{}) {},
 	ErrorfFunc: func(format string, args ...interface{}) {},
 }
+
+var MaxSize uint64 = 1024 * 1024 * 1800
